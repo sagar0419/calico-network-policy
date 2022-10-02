@@ -43,39 +43,39 @@ spec:
 ` If you don't want to use this label approach, you can simply add the namespace name in the manifest file infront of namespaceSelector. Manifest file for this is also added in the repo with the name networkpolicy-with-namespace.yaml. `  
 
 ## Testing Connectivity
-For testing you can deploy your own application or you can use the below-mentioned manifest and deploy it in different namespaces.
+For testing you can deploy your own application or you can use the below-mentioned manifest and deploy it in different namespaces. Manifest file os also added in repo name of the file is `deployment.yaml`.
 ```yaml
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: demo
+  name: backend
 spec:
   type: ClusterIP
   ports:
     - targetPort: 80
       port: 80
   selector:
-    app: helloworld-one
+    app: test-one
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: helloworld-one
+  name: test-one
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: helloworld-one
+      app: test-one
   template:
     metadata:
       labels:
-        app: helloworld-one
+        app: test-one
     spec:
       containers:
-      - name: helloworld-one
-        Image: yauritux/busybox-curl
+      - name: test-one
+        image: sagar27/testing:latest
         ports:
         - containerPort: 80
 ```
