@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo
+spec:
+  type: ClusterIP
+  ports:
+    - targetPort: 80
+      port: 80
+  selector:
+    app: test-one
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-one
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-one
+  template:
+    metadata:
+      labels:
+        app: test-one
+    spec:
+      containers:
+      - name: test-one
+        image: sagar27/testing:latest
+        ports:
+        - containerPort: 80
