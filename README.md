@@ -1,5 +1,5 @@
 ## Problem statement:
-The task is to create a network policy in Kubernetes using calico CNI. So, only two namespaces are able to communicate with each other. Calico is an open source networking and network security solution for containers, virtual machines, and native host-based workloads
+In this tutorial we will create a network policy in Kubernetes using calico CNI. So, only two namespaces will be able to communicate with each other. Calico is an open source networking and network security solution for containers, virtual machines, and native host-based workloads
 
 ## Prerequisite:
 - The Kubernetes cluster is up and running.
