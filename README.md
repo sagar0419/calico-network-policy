@@ -16,7 +16,7 @@ In this example, we have allowed communication between the kube-system, calico-s
 
 You can change this manifest according to your need by adding or removing different namespaces of your choice.
 
-You can read more about GlobalNetworkPolicy and its parameter in detail here.
+You can read more about GlobalNetworkPolicy and its parameter in detail here. Manifest file is added in repo with the name `networkpolicy-with-label.yaml`
 
 ```yaml
 apiVersion: crd.projectcalico.org/v1
@@ -40,6 +40,7 @@ spec:
       ports:
       - 53
 ```
+` If you don't want to use this label approach, you can simply add the namespace name in the manifest file infront of namespaceSelector. Manifest file for this is also added in the repo with the name `networkpolicy-with-namespace.yaml`. `  
 
 ## Testing Connectivity
 For testing you can deploy your own application or you can use the below-mentioned manifest and deploy it in different namespaces.
