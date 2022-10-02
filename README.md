@@ -13,27 +13,37 @@ Prerequisite
  - Before the migration, clear the abnormal pod resources in the source cluster. If the pod is in an abnormal state and has a PVC mounted, the PVC will remain in the pending state after the cluster is migrated.
 
 For this tutorial, We have created 2 Kubernetes clusters (Source and Target). On the Source cluster, our WordPress application is running and on the target cluster, we will move and restore the backup of the WordPress application.
-Velero Architecture
-Architectural representation of Velero.In the above Architecture diagram, there are 2 Kubernetes clusters Source and target. The velero controller is deployed on both clusters. Velero CLI is installed on the local machine which has access to the source and the target Kubernetes cluster. So, that we can access the velero controller from the local machine. The AWS S3 is the storage location, used to store the backup taken from the source Kubernetes cluster. Backups are stored on S3 in tar format.
-Velero Installation: 
+
+## Velero Installation: 
 Velero uses a backup location to perform backup and restore your cluster. The backup location can be an AWS S3, Azure Blob storage or any S3 compatible storage. For this tutorial, We are going to use AWS S3 to back up and restore cluster data.
-Create a file with the name "credentials" in your present working directory and paste the AWS access key and secret in that file. Make sure you use those credentials which have access to the AWS S3 as mentioned in the prerequisite.
+
+Create a file with the name `"credentials"` in your present working directory and paste the AWS access key and secret in that file. Make sure you use those credentials which have access to the AWS S3 as mentioned in the prerequisite.
+```bash
 [default]
 aws_access_key_id = AKXXXXXXXXXXXXXXXT
 aws_secret_access_key = bXXXXXXXXXXXXXXXXXXXXz
+```
 Now our credentials file is created, let's install Velero CLI on our local machine. First, we need to download the tar file of Velero.
-wget https://github.com/vmware-tanzu/velero/releases/download/v1.9.2/velero-v1.9.2-linux-amd64.tar.gz
+``` bash wget https://github.com/vmware-tanzu/velero/releases/download/v1.9.2/velero-v1.9.2-linux-amd64.tar.gz``` 
+
 After running the above command successfully the Velero gets downloaded to your present directory. As you can see the downloaded file is in tar format let's untar the tar file.
-tar -xvf velero-v1.9.2-linux-amd64.tar.gz
+``` bash tar -xvf velero-v1.9.2-linux-amd64.tar.gz ```
+
 Once your file is untared move the Velero to the "/usr/local/bin/" directory.
-sudo mv velero-v1.9.2-linux-amd64/velero /usr/local/bin/
+``` bash sudo mv velero-v1.9.2-linux-amd64/velero /usr/local/bin/```
+
 To check if the velero version, run this command.
-velero version - client-only
+``` bash velero version - client-only ```
+
 You will get an output like this.
+```bash 
 Client:
  Version: v1.9.2
- Git commit: 82a100981cc66d119cf9b1d121f45c5c9dcf99e1
+ Git commit: 82a100981cc66d119cf9b1d121f45c5c9dcf99e1 
+```
 Now, velero is installed on our local machine. Let's deploy velero in our Kubernetes cluster, and for that run the following command.
+
+``` bash
 velero install \
  - provider aws \
  - plugins velero/velero-plugin-for-aws:v1.4.1 \
@@ -42,24 +52,34 @@ velero install \
  - use-volume-snapshots=false \
  - use-restic \
  - backup-location-config region=us-west-2
-In the above command "sagar-backup-pv" is the name of the AWS S3 bucket which we have created for this tutorial, "credentials" is the name of the file in which we have stored the AWS credentials to access the AWS S3 bucket and "us-west-2" is the AWS bucket location. This command will install all the velero components on the Kubernetes cluster.
-#Make sure that you run this command against both of your clusters.
-Annotations:
+```
+In the above command `"sagar-backup-pv"` is the name of the AWS S3 bucket which we have created for this tutorial, `"credentials"` is the name of the file in which we have stored the AWS credentials to access the AWS S3 bucket and `"us-west-2"` is the AWS bucket location. This command will install all the velero components on the Kubernetes cluster.
+
+`Make sure that you run this command against both of your clusters.`
+
+##Annotations:
 If you need to back up the data of storage volume in the pod, add an annotation to the pod. The annotation template is as follows:
-kubectl annotate <pod/pod_name> backup.velero.io/backup-volumes=<volume_name>  -n <namespace>
-If you have multiple volumes attached to the pod you can add annotation like this and only those volumes names specified in the command will be taken for backup.
-kubectl -n <namespace> annotate <pod/pod_name> backup.velero.io/backup-volumes=<volume_name_1>,<volume_name_2>,…
-<namespace>: namespace where the pod is located.
-<pod_name>: pod name.
-<volume_name>: name of the persistent volume mounted to the pod.
+```bash kubectl annotate <pod/pod_name> backup.velero.io/backup-volumes=<volume_name>  -n <namespace> ```
+
+ If you have multiple volumes attached to the pod you can add annotation like this and only those volumes names specified in the command will be taken for backup.
+```bash kubectl -n <namespace> annotate <pod/pod_name> backup.velero.io/backup-volumes=<volume_name_1>,<volume_name_2>,… ```
+
+- <namespace>: namespace where the pod is located.
+- <pod_name>: pod name.
+- <volume_name>: name of the persistent volume mounted to the pod.
 
 You can run the describe statement to query the pod information. The Volume field indicates the names of all persistent volumes attached to the pod.
 You can check the volume name by running the pod describe command.
-kubectl  describe <pod/pod_name> -n <namespace>
+
+ ``` bash kubectl  describe <pod/pod_name> -n <namespace> ```
+
 Backing up the application in the source cluster:
+
 We have deployed WordPress as a demo application on our source Kubernetes cluster. We have used the bitnami helm chart for this deployment.
 Screenshot of the application running on the source Kubernetes cluster.As you can see in the screenshot we are using the longhorn storage on our source cluster. 
+
 Screenshot of storage class used in source Kubernetes cluster.We will migrate the PVC from longhorn storage to Rook CEPH storage.
+
 We have made a few changes to the WordPress site which are shown in this screenshot.
 Screenshot of the application on the source Kubernetes cluster.Changing PVC Storage Classes:
 # Note: - You can Ignore this step if you are using the same storage solution on the source and the target Kubernetes clusters.
@@ -73,6 +93,7 @@ Changing the name of the storage class.
 
 In this approach, we need to create the storage class with the name of the storage solution which is available in the source cluster.
 In the below example, we have created a storage class manifest for Rook-ceph and under the metadata section, we named it longhorn.
+```yaml
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -109,6 +130,8 @@ allowVolumeExpansion: true
 mountOptions:
   # uncomment the following line for debugging
   #- debug
+```
+ 
 # Please note that we have only changed the name of the storage class.
 Create a storage class manifest and apply that manifest to the target cluster. Once done you can verify that the storage class is created or not by running the following command.
 kubectl get storageclass
