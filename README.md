@@ -1,7 +1,7 @@
 ## Problem statement:
 The task is to create a network policy in Kubernetes using calico CNI. So, only two namespaces are able to communicate with each other. Calico is an open source networking and network security solution for containers, virtual machines, and native host-based workloads
 
-## Prerequisite: -
+## Prerequisite:
 - The Kubernetes cluster is up and running.
 - Calico is installed. If not installed, you can follow this link to find out the installation steps
 - Application services are deployed in different namespaces. (For this task we have created an application in default, frontend and backend namespaces.)
