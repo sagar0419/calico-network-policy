@@ -1,9 +1,13 @@
 # Backup, Restore and Migrate Kubernetes Cluster resources using Velero.
 ## Introduction
 Kubernetes has become the de-facto choice of every organisation for dealing with microservices. It is used by organisations for mission-critical applications and there is a critical need for backing up the application and its associated data. 
-Backup and restoration of data is a very crucial part. You can quickly recover from any disaster if you have backups. In this blog post, we will talk about the backup and restoration of Kubernetes resources using Velero.
+
+Backup and restoration of data is a very crucial part. You can quickly recover from any disaster if you have backups. In this github post, we will talk about the backup and restoration of Kubernetes resources using Velero.
+
 Velero is an open-source tool for the backup and recovery of resources running in the Kubernetes cluster. Velero uses Kubernetes API discovery capabilities to collect the data to be backed up. Velero can perform manual backup and automated backups, restore, disaster recovery, migrating resources and PV from one cluster to another Kubernetes cluster.
+
 In this tutorial, We will guide you to take a backup of resources running in the source Kubernetes cluster and we will also guide you to migrate that backup to the target cluster.
+
 Prerequisite
  - 2 Kubernetes cluster up and running, as we are explaining migration also in this tutorial.
  - You are able to run the kubectl command against both Kubernetes clusters.
