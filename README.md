@@ -63,17 +63,17 @@ In the above command `"sagar-backup-pv"` is the name of the AWS S3 bucket which 
 
 `Make sure that you run this command against both of your clusters.`
 
-##Annotations:
+## Annotations:
 
 If you need to back up the data of storage volume in the pod, add an annotation to the pod. The annotation template is as follows:
 
-```bash kubectl annotate <pod/pod_name> backup.velero.io/backup-volumes=<volume_name>  -n <namespace> ```
+``` bash kubectl annotate <pod/pod_name> backup.velero.io/backup-volumes=<volume_name>  -n <namespace> ```
 
 If you have multiple volumes attached to the pod you can add annotation like this and only those volumes names specified in the command will be taken for backup.
 
 ```bash kubectl -n <namespace> annotate <pod/pod_name> backup.velero.io/backup-volumes=<volume_name_1>,<volume_name_2>,… ```
 
-- <namespace>: namespace where the pod is located.
+- < namespace > : namespace where the pod is located.
 - <pod_name>: pod name.
 - <volume_name>: name of the persistent volume mounted to the pod.
 
@@ -91,7 +91,8 @@ Screenshot of storage class used in source Kubernetes cluster. We will migrate t
 
 We have made a few changes to the WordPress site which are shown in this screenshot.
  
-# Note: - You can Ignore this step if you are using the same storage solution on the source and the target Kubernetes clusters.
+` Note: - You can Ignore this step if you are using the same storage solution on the source and the target Kubernetes clusters.`
+
 In our case, We are migrating the application with PVC using storage class longhorn on the source cluster to the target cluster where we have rook-cephfs installed.
  
 There are 2 ways to do this:-
@@ -105,7 +106,7 @@ Both ways are explained below you can choose any of them.
 In this approach, we need to create the storage class with the name of the storage solution which is available in the source cluster.
 In the below example, we have created a storage class manifest for Rook-ceph and under the metadata section, we named it longhorn.
 
- ```yaml
+ ``` yaml
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -239,6 +240,7 @@ Cron schedule uses the format mentioned below:
 ```
  
 for example:
+
 ```bash velero schedule create demo-schedule - schedule="0 9* * *" ```
 
 This command will create the backup, demo-schedule, within Velero, but the backup will not be taken until the next scheduled time, 9 AM. Backups created by a schedule are saved with the name <SCHEDULE NAME>-<TIMESTAMP>, where <SCHEDULE NAME> is the name which we mentioned in the command and <TIMESTAMP> is formatted as YYYYMMDDhhmmss. 
