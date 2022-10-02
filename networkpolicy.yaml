@@ -1,0 +1,20 @@
+apiVersion: crd.projectcalico.org/v1
+kind: GlobalNetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  namespaceSelector: 'network == "calico"'
+  ingress:
+  - action: Allow
+    source:
+      namespaceSelector: 'network == "calico"'   
+  egress:
+  - action: Allow
+    destination:
+      namespaceSelector: 'network == "calico"' 
+  - action: Allow
+    protocol: UDP
+    destination:
+      selector: 'k8s-app == "kube-dns"'
+      ports:
+      - 53
